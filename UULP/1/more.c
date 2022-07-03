@@ -1,19 +1,22 @@
 /**
  * Created by iccy on 22-7-3.
  *
- * more - version 0.5 of more
+ * more - version 0.6 of more
  * read and print 24 lines the pause for a few special commands
  * feature of version 0.2: read from /dev/tty for commands
  * feature of version 0.3: set /dev/tty to be unbuffered
  * feature of version 0.4: set /dev/tty to be echoless
  * feature of version 0.5: override "more?"
+ * feature of version 0.6: dynamically get terminal size
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 #include <termios.h>
-#define PAGELEN 24
 #define LINELEN 512
+
+int page_len;
 
 void do_more(FILE*);
 int  see_more(FILE*);
@@ -38,7 +41,7 @@ int main(int argc, const char* argv[]) {
 }
 
 /*
- * read PAGELEN lines, then call see_more() for further instructions
+ * read page_len lines, then call see_more() for further instructions
  */
 void do_more(FILE* fp) {
   char  line[LINELEN];
@@ -47,6 +50,7 @@ void do_more(FILE* fp) {
   FILE* fp_tty = NULL;
 
   struct termios ctrl;
+  struct winsize ws;
 
   fp_tty = fopen("/dev/tty", "r"); /* NEW: cmd stream */
   if (fp_tty == NULL) {            /* if open fails  */
@@ -59,8 +63,12 @@ void do_more(FILE* fp) {
                            unbuffered, also make the input echoless */
   tcsetattr(fileno(fp_tty), TCSANOW, &ctrl);
 
+  ioctl(fileno(fp_tty), TIOCGWINSZ, &ws);
+
+  page_len = ws.ws_row;
+
   while (fgets(line, LINELEN, fp)) { /* more input */
-    if (num_of_lines == PAGELEN) {   /* full screen? */
+    if (num_of_lines == page_len) {  /* full screen? */
       reply = see_more(fp_tty);      /* y: ask user */
       if (reply == 0) {              /* n: done */
         break;
@@ -91,9 +99,9 @@ int see_more(FILE* cmd) {
     switch (c) {
     case 'q': /* q -> N */
       return 0;
-    case ' ':         /* ' ' => next page */
-      return PAGELEN; /* how many to show */
-    case '\n':        /* Enter key => 1 line */
+    case ' ':          /* ' ' => next page */
+      return page_len; /* how many to show */
+    case '\n':         /* Enter key => 1 line */
       return 1;
     }
   }
