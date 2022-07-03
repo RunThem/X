@@ -1,13 +1,15 @@
 /**
  * Created by iccy on 22-7-3.
  *
- * more - version 0.2 of more
+ * more - version 0.3 of more
  * read and print 24 lines the pause for a few special commands
  * feature of version 0.2: read from /dev/tty for commands
+ * feature of version 0.3: set /dev/tty to be unbuffered
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <termios.h>
 #define PAGELEN 24
 #define LINELEN 512
 
@@ -42,10 +44,17 @@ void do_more(FILE* fp) {
   int   reply;
   FILE* fp_tty = NULL;
 
-  fp_tty       = fopen("/dev/tty", "r"); /* NEW: cmd stream */
-  if (fp_tty == NULL) {                  /* if open fails  */
-    exit(1);                             /* no use in running */
+  struct termios ctrl;
+
+  fp_tty = fopen("/dev/tty", "r"); /* NEW: cmd stream */
+  if (fp_tty == NULL) {            /* if open fails  */
+    exit(1);                       /* no use in running */
   }
+
+  tcgetattr(fileno(fp_tty), &ctrl);
+  ctrl.c_lflag &=
+      ~ICANON; /* turning off canonical mode makes input unbuffered */
+  tcsetattr(fileno(fp_tty), TCSANOW, &ctrl);
 
   while (fgets(line, LINELEN, fp)) { /* more input */
     if (num_of_lines == PAGELEN) {   /* full screen? */
