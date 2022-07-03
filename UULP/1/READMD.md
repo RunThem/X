@@ -82,3 +82,14 @@ ctrl.c_lflag &= ~(ICANON | ECHO); /* turning off canonical mode makes input unbu
 ```c
 fputs("\r       \r", stdout);
 ```
+
+#### Q
+我们固定一页是24行, 这可不是什么好事.
+
+#### A
+我们可以使用 `iotcl()` 获取终端的大小. (没有考虑虚拟终端更改大小的情况, 只在程序启动时获取一次).
+```c
+struct winsize ws;
+ioctl(fileno(fp_tty), TIOCGWINSZ, &ws);
+page_len = ws.ws_row;
+```
