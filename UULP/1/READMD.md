@@ -73,3 +73,12 @@ tcsetattr(fileno(fp_tty), TCSANOW, &ctrl);
 ```c
 ctrl.c_lflag &= ~(ICANON | ECHO); /* turning off canonical mode makes input unbuffered, also make the input echoless */
 ```
+
+#### Q
+在 `more` 中, 底下一行的不会向上移动的,  但现在我们的这个版本还不行啊
+
+#### A
+我们在打印 "more?" 时没有换行, 只需将光标设置到行首, 打印出几个空格覆盖掉 "more?" 再次使光标回到行首即可, `\r` 就是起这个作用的.
+```c
+fputs("\r       \r", stdout);
+```
