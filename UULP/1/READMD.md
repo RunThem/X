@@ -93,3 +93,6 @@ struct winsize ws;
 ioctl(fileno(fp_tty), TIOCGWINSZ, &ws);
 page_len = ws.ws_row;
 ```
+
+## other Q
+得到文件中已显示的百分比, 但这个需要知道文件的行数而不是文件大小, 有点性能问题啊, 不可能把一个大文件全读了去得到行数吧. 还有书上说终端类型定为 `vt100` 是什么意思? 反白显示文字?
