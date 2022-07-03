@@ -1,0 +1,10 @@
+---
+Language:        Cpp
+BasedOnStyle:  LLVM
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlwaysBreakBeforeMultilineStrings: true
+AllowShortFunctionsOnASingleLine: Empty
+PointerAlignment: Left
+IndentWidth:     2
+...
