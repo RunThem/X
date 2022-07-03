@@ -1,10 +1,11 @@
 /**
  * Created by iccy on 22-7-3.
  *
- * more - version 0.3 of more
+ * more - version 0.4 of more
  * read and print 24 lines the pause for a few special commands
  * feature of version 0.2: read from /dev/tty for commands
  * feature of version 0.3: set /dev/tty to be unbuffered
+ * feature of version 0.4: set /dev/tty to be echoless
  */
 
 #include <stdio.h>
@@ -53,7 +54,8 @@ void do_more(FILE* fp) {
 
   tcgetattr(fileno(fp_tty), &ctrl);
   ctrl.c_lflag &=
-      ~ICANON; /* turning off canonical mode makes input unbuffered */
+      ~(ICANON | ECHO); /* turning off canonical mode makes input
+                           unbuffered, also make the input echoless */
   tcsetattr(fileno(fp_tty), TCSANOW, &ctrl);
 
   while (fgets(line, LINELEN, fp)) { /* more input */
