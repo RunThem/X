@@ -1,8 +1,8 @@
 ---
 Language:        Cpp
 BasedOnStyle:  LLVM
-AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: true
+AlignConsecutiveAssignments: AcrossEmptyLinesAndComments
+AlignConsecutiveDeclarations: AcrossComments
 AlwaysBreakBeforeMultilineStrings: true
 AllowShortFunctionsOnASingleLine: Empty
 PointerAlignment: Left
