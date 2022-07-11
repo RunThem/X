@@ -129,6 +129,7 @@ cp ${source-file} ${target-file}
 ```
 
 `cp` 命令的处理流程如下:
+
 ```txt
    open source file for reading
    open copy file for writing
@@ -137,4 +138,10 @@ cp ${source-file} ${target-file}
                                          |
    close source file       <-------------+
    close copy file 
+```
+
+*ps: 可以使用linux自带的 `cmp` 文件对比工具测试 `cp` 命令是否有效*
+
+```shell
+cmp ${source-file} ${target-file}
 ```
