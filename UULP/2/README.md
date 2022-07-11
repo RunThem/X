@@ -68,3 +68,38 @@ struct utmp
   char __glibc_reserved[20];		/* Reserved for future use.  */
 };
 ```
+
+#### Q
+当前版本有点小问题, 没有消除空白的记录和正确的显示时间.
+```
+(~/D/X/U/2) ./who 
+reboot   ~        1657435942 (5.16.0-1-amd64)
+runlevel ~        1657435995 (5.16.0-1-amd64)
+iccy     tty7     1657436023 (:0)
+iccy     pts/0    1657436024 (:0)
+iccy     pts/1    1657436025 (:0)
+         pts/2    1657436155 (:0)
+```
+
+可以看到最后一行是无效的, 另外所有的时间都有问题.
+
+#### A
+消除无效记录好办, `struct utmp` 中有一个字段 `ut_type` 即使用来区分不同的用户, 在 `utmp.h` 中有着以下宏是该字段的有效值.
+```c
+/* Values for the `ut_type' field of a `struct utmp'.  */
+#define EMPTY		0	/* No valid user accounting information.  */
+
+#define RUN_LVL		1	/* The system's runlevel.  */
+#define BOOT_TIME	2	/* Time of system boot.  */
+#define NEW_TIME	3	/* Time after system clock changed.  */
+#define OLD_TIME	4	/* Time when system clock changed.  */
+
+#define INIT_PROCESS	5	/* Process spawned by the init process.  */
+#define LOGIN_PROCESS	6	/* Session leader of a logged in user.  */
+#define USER_PROCESS	7	/* Normal process.  */
+#define DEAD_PROCESS	8	/* Terminated process.  */
+
+#define ACCOUNTING	9
+```
+
+其中 `USER_PROCESS` 表示这是已经登录的用户, 那这加个if即可.
