@@ -1,9 +1,9 @@
 /**
  * Created by iccy on 22-7-4.
  *
- * who.c - a first version of the who program open, read UTMP file, and show
- * results
- *
+ * who.c - version 0.2
+ * open, read UTMP file, and show results
+ * feature of version 0.2: determine if the user is already logged in
  */
 
 #include <fcntl.h>
@@ -30,6 +30,10 @@ int main() {
   }
 
   while (read(utmpfd, &current_record, reclen) == reclen) {
+    if (USER_PROCESS != current_record.ut_type) {
+      continue;
+    }
+
     show_info(&current_record);
   }
 
