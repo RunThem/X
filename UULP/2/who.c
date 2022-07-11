@@ -4,6 +4,7 @@
  * who.c - version 0.2
  * open, read UTMP file, and show results
  * feature of version 0.2: determine if the user is already logged in
+ * feature of version 0.3: format time to make it readable
  */
 
 #include <fcntl.h>
@@ -48,12 +49,17 @@ int main() {
  * sizes should not be hardwired
  */
 void show_info(struct utmp* utbufp) {
-  char buf[28] = {0};
+  time_t     nowtime;
+  struct tm* nowtm;
+  char       tmbuf[64];
 
   printf("%-8.8s ", utbufp->ut_name); /* logname */
   printf("%-8.8s ", utbufp->ut_line); /*  a space */
 
-  printf("%d ", utbufp->ut_xtime); /* login time */
+  nowtime = utbufp->ut_xtime;
+  nowtm   = localtime(&nowtime);
+  strftime(tmbuf, sizeof(tmbuf), "%Y-%m-%d %H:%M", nowtm);
+  printf("%s ", tmbuf); /* login time */
 
 #ifdef SHOWHOST
   printf("(%s)", utbufp->ut_host); /* host */
