@@ -103,3 +103,19 @@ iccy     pts/1    1657436025 (:0)
 ```
 
 其中 `USER_PROCESS` 表示这是已经登录的用户, 那这加个if即可.
+
+至于转换一下时间, 和书上的不太一样, 在书上的版本中, `ut_tv` 的类型是 `time_t`, 使用 `ctime()` 来格式化为可读的形式, 但在我的 `Debian 11` 中其类型为 `struct timeval`, 格式化有点复杂, 主要使用 `strftime()`.
+```c
+/* https://stackoverflow.com/questions/2408976/struct-timeval-to-printable-format */
+
+struct timeval tv;
+time_t nowtime;
+struct tm *nowtm;
+char tmbuf[64], buf[64];
+
+gettimeofday(&tv, NULL);
+nowtime = tv.tv_sec;
+nowtm = localtime(&nowtime);
+strftime(tmbuf, sizeof tmbuf, "%Y-%m-%d %H:%M:%S", nowtm);
+snprintf(buf, sizeof buf, "%s.%06ld", tmbuf, tv.tv_usec);
+```
