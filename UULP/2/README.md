@@ -119,3 +119,22 @@ nowtm = localtime(&nowtime);
 strftime(tmbuf, sizeof tmbuf, "%Y-%m-%d %H:%M:%S", nowtm);
 snprintf(buf, sizeof buf, "%s.%06ld", tmbuf, tv.tv_usec);
 ```
+
+`who` 命令就到此结束了, 来看看 `cp` 命令怎么写?
+
+### cp 命令可以做什么
+`cp` 命令可以复制文件, 如果目标文件不存在, 则创建该文件, 如果文件存在则覆盖掉.
+```shell
+cp ${source-file} ${target-file}
+```
+
+`cp` 命令的处理流程如下:
+```txt
+   open source file for reading
+   open copy file for writing
++->read from source to buffer -- eof?   -+
++- write from buffer to copy             |
+                                         |
+   close source file       <-------------+
+   close copy file 
+```
