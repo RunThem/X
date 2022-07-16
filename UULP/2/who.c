@@ -5,6 +5,7 @@
  * open, read UTMP file, and show results
  * feature of version 0.2: determine if the user is already logged in
  * feature of version 0.3: format time to make it readable
+ * feature of version 0.4: buffers input(using utmplib)
  */
 
 #include <fcntl.h>
@@ -17,28 +18,29 @@
 
 #define SHOWHOST /* include remote machine on output */
 
-void    show_info(struct utmp* utbufp);
-ssize_t format_timeval(struct timeval* tv, char* buf, size_t sz);
+void show_info(struct utmp* utbufp);
+
+extern int          utmp_open(char* filename);
+extern struct utmp* utmp_next();
+extern void         utmp_close();
 
 int main() {
-  struct utmp current_record; /* read info into here */
-  int         utmpfd;         /* read from this descriptor */
-  int         reclen = sizeof(struct utmp);
+  struct utmp* utbufp;
 
-  if ((utmpfd = open(UTMP_FILE, O_RDONLY)) == -1) {
+  if (-1 == utmp_open(UTMP_FILE)) {
     perror(UTMP_FILE); /* UTMP_FILE is in utmp.h */
     exit(1);
   }
 
-  while (read(utmpfd, &current_record, reclen) == reclen) {
-    if (USER_PROCESS != current_record.ut_type) {
+  while (NULL != (utbufp = utmp_next())) {
+    if (USER_PROCESS != utbufp->ut_type) {
       continue;
     }
 
-    show_info(&current_record);
+    show_info(utbufp);
   }
 
-  close(utmpfd);
+  utmp_close();
 
   return 0;
 }
