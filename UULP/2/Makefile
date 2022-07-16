@@ -1,7 +1,7 @@
 SHELL = /bin/bash
 
-who: who.c
-	$(CC) who.c -o who
+who: who.c utmplib.c
+	$(CC) who.c utmplib.c -o who
 
 cp: cp.c
 	$(CC) cp.c -o cp
