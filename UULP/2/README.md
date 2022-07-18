@@ -329,3 +329,139 @@ iccy     pts/1    :0               Sun20    5.00s 10:57   0.00s w
 
 在正常状态下, `wtmp` 中的登录与注销消息数量是相等的, 就如同 `()` 一样, 是配对的, 若在非正常状态下, 那必然有多余的登录消息,
 那就会为已这多余的信息重建可用终端记录.(猜想的)
+
+## 题三
+
+向 `/dev/tty` 中拷贝文件后在屏幕中打印出来了.
+
+```shell
+$ cp Makefile /dev/tty
+SHELL = /bin/bash
+
+who: who.c utmplib.c
+        $(CC) who.c utmplib.c -o who
+
+cp: cp.c
+        $(CC) cp.c -o cp
+
+buffer_test: buffer_test.c
+        $(CC) buffer_test.c -o buffer_test
+        dd if=/dev/random of=test.file bs=1M count=10
+        @for i in 1 4 16 128 256 512 1024 2048 4096 8192 16384;\
+        do\
+                echo -n "++++++++++++++++++++++++++++++";\
+                echo -e "\nbuffer size $${i} byte.";\
+                time ./buffer_test $${i};\
+                echo "++++++++++++++++++++++++++++++";\
+        done
+
+clean:
+        $(RM) who cp buffer_test test.file
+
+PYTHON: clean
+```
+
+而从 `/dev/tty` 中读取内容到文件中后在终端中输入字符会被写入该文件中.
+
+```shell
+$ cat /dev/tty > test
+test
+Hello World
+$ cat test 
+test
+Hello World
+```
+
+## 题四
+
+标准C函数如 `fopen()`, `fclose()` `fgets()` 是在用户态实现了缓冲区, `FILE` 的结构信息如下(`musl libc`):
+
+```c
+typedef struct _IO_FILE FILE;
+
+struct _IO_FILE {
+	unsigned flags;
+	unsigned char *rpos, *rend;
+	int (*close)(FILE *);
+	unsigned char *wend, *wpos;
+	unsigned char *mustbezero_1;
+	unsigned char *wbase;
+	size_t (*read)(FILE *, unsigned char *, size_t);
+	size_t (*write)(FILE *, const unsigned char *, size_t);
+	off_t (*seek)(FILE *, off_t, int);
+	unsigned char *buf;
+	size_t buf_size;
+	FILE *prev, *next;
+	int fd;
+	int pipe_pid;
+	long lockcount;
+	int mode;
+	volatile int lock;
+	int lbf;
+	void *cookie;
+	off_t off;
+	char *getln_buf;
+	void *mustbezero_2;
+	unsigned char *shend;
+	off_t shlim, shcnt;
+	FILE *prev_locked, *next_locked;
+	struct __locale_struct *locale;
+};
+```
+
+具体的实现还是去看 `musl libc` 吧
+
+## 题五
+
+在Linux中有个函数 `fsync()` 可以强制向文件描述符中的缓冲区写入到文件中
+
+```shell
+$ man fsync
+```
+
+## 题六
+
+代码详见 `2_6.c`
+
+```shell
+$ make 2_6
+cc 2_6.c -o 2_6
+cp Makefile test
+./2_6
+buf: SHELL = /bin/bash
+
+w
+buf testing 123...ash
+
+w
+cat test
+testing 123...ash
+
+who: who.c utmplib.c
+        $(CC) who.c utmplib.c -o who
+
+cp: cp.c
+        $(CC) cp.c -o cp
+
+buffer_test: buffer_test.c
+        $(CC) buffer_test.c -o buffer_test
+        dd if=/dev/random of=test.file bs=1M count=10
+        @for i in 1 4 16 128 256 512 1024 2048 4096 8192 16384;\
+        do\
+                echo -n "++++++++++++++++++++++++++++++";\
+                echo -e "\nbuffer size $${i} byte.";\
+                time ./buffer_test $${i};\
+                echo "++++++++++++++++++++++++++++++";\
+        done
+
+2_6: 2_6.c
+        $(CC) 2_6.c -o 2_6
+        cp Makefile test
+        ./2_6
+        cat test
+
+clean:
+        $(RM) who cp buffer_test test.file 2_6 test
+
+PYTHON: clean
+```
