@@ -17,7 +17,13 @@ buffer_test: buffer_test.c
 		echo "++++++++++++++++++++++++++++++";\
 	done
 
+2_6: 2_6.c
+	$(CC) 2_6.c -o 2_6
+	cp Makefile test
+	./2_6
+	cat test
+
 clean:
-	$(RM) who cp buffer_test test.file
+	$(RM) who cp buffer_test test.file 2_6 test
 
 PYTHON: clean
