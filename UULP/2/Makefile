@@ -23,7 +23,12 @@ buffer_test: buffer_test.c
 	./2_6
 	cat test
 
+2_9: 2_9.c
+	$(CC) 2_9.c -o 2_9
+	touch test_2_9
+	./2_9 test_2_9
+
 clean:
-	$(RM) who cp buffer_test test.file 2_6 test
+	$(RM) who cp buffer_test test.file 2_6 test 2_9 test_2_9
 
 PYTHON: clean
