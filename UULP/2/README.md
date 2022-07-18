@@ -175,85 +175,85 @@ cmp ${source-file} ${target-file}
 $ make buffer_test
 cc buffer_test.c -o buffer_test
 dd if=/dev/random of=test.file bs=1M count=10
-记录了10+0 的读入
-记录了10+0 的写出
-10485760字节（10 MB，10 MiB）已复制，0.213696 s，49.1 MB/s
+10+0 records in
+10+0 records out
+10485760 bytes (10 MB, 10 MiB) copied, 0.210118 s, 49.9 MB/s
 ++++++++++++++++++++++++++++++
 buffer size 1 byte.
 
-real    0m4.910s
-user    0m2.157s
-sys     0m2.753s
+real    0m4.909s
+user    0m2.060s
+sys     0m2.848s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 4 byte.
 
-real    0m1.214s
-user    0m0.507s
-sys     0m0.707s
+real    0m1.232s
+user    0m0.536s
+sys     0m0.696s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 16 byte.
 
-real    0m0.311s
-user    0m0.156s
-sys     0m0.155s
+real    0m0.314s
+user    0m0.112s
+sys     0m0.203s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 128 byte.
 
-real    0m0.042s
-user    0m0.017s
-sys     0m0.025s
+real    0m0.042s
+user    0m0.034s
+sys     0m0.008s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 256 byte.
- 
-real    0m0.022s
-user    0m0.017s
-sys     0m0.004s
+
+real    0m0.021s
+user    0m0.007s
+sys     0m0.014s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 512 byte.
- 
-real    0m0.012s
-user    0m0.012s
-sys     0m0.000s
+
+real    0m0.011s
+user    0m0.006s
+sys     0m0.005s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 1024 byte.
- 
-real    0m0.007s
-user    0m0.000s
-sys     0m0.007s
+
+real    0m0.007s
+user    0m0.000s
+sys     0m0.007s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 2048 byte.
- 
-real    0m0.004s
-user    0m0.000s
-sys     0m0.004s
+
+real    0m0.004s
+user    0m0.000s
+sys     0m0.004s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 4096 byte.
- 
-real    0m0.003s
-user    0m0.000s
-sys     0m0.003s
+
+real    0m0.003s
+user    0m0.000s
+sys     0m0.002s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 8192 byte.
- 
-real    0m0.002s
-user    0m0.002s
-sys     0m0.000s
+
+real    0m0.002s
+user    0m0.002s
+sys     0m0.000s
 ++++++++++++++++++++++++++++++
 ++++++++++++++++++++++++++++++
 buffer size 16384 byte.
- 
-real    0m0.002s
-user    0m0.000s
-sys     0m0.002s
+
+real    0m0.001s
+user    0m0.001s
+sys     0m0.000s
 ++++++++++++++++++++++++++++++
 ```
 
@@ -303,3 +303,29 @@ sys     0m0.002s
 我们需要调整这个指针该怎么办呢, 是有一个系统调用可以去调整的 `lseek()`.
 
 ## 题一
+
+`w` 命令显示有谁登录以及他们在做什么. 大致如下:
+
+```shell
+$ w
+ 21:23:09 up 1 day, 56 min,  4 users,  load average: 0.50, 0.83, 0.78
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+iccy     tty7     :0               Sun20   24:56m 10:09   0.09s /usr/bin/startplasma-x11
+iccy     pts/0    :0               Sun20   24:55m  0.00s 11.49s /usr/bin/kded5
+iccy     pts/1    :0               Sun20    5.00s 10:57   0.00s w
+```
+
+标题中显示的信息有 `w` 命令执行的时间, 系统运行了多长时间, 当gj前有几个用户登录了, 以及过去1, 5, 15分钟的系统负载平均值.
+
+下面为每个用户显示以下条目: 登录名, tty名称, 远程主机, 登录时间, 空闲时间, JCPU, PCPU以及他们当前进程的命令行
+
+前面一部分和 `who` 是一样的, 至于后面的信息是通过 `utmp` 中的 `ut_pid` 得到当前用户运行的进程ID, 在根据该ID从 `/proc`
+中得到详细的信息. 标题中的信息应该也有一部分是从 `proc` 中得到的.
+
+## 题二
+
+这个问题的答案大致在 `man wtmp` 中, `wtmp` 是与 `utmp` 差不多的文件, 区别是 `wtmp` 记录着系统启动以来的所有 `utmp`
+更改, 每次更改 `utmp` 都会同步的追加到 `wtmp` 中.
+
+在正常状态下, `wtmp` 中的登录与注销消息数量是相等的, 就如同 `()` 一样, 是配对的, 若在非正常状态下, 那必然有多余的登录消息,
+那就会为已这多余的信息重建可用终端记录.(猜想的)
