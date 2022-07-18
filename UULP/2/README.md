@@ -465,3 +465,56 @@ clean:
 
 PYTHON: clean
 ```
+
+## 题七
+
+有一个有意思的地方.
+
+```shell
+$ man man
+```
+
+可以得到它自己的详细信息, 总共分为 `9` 个小节, 分别是:
+> 1. Executable programs or shell commands
+> 2. System calls (functions provided by the kernel)
+> 3. Library calls (functions within program libraries)
+> 4. Special files (usually found in /dev)
+> 5. File formats and conventions, e.g. /etc/passwd
+> 6. Games
+> 7. Miscellaneous (including macro packages and conventions), e.g. man(7),
+     groff(7), man-pages(7)
+> 8. System administration commands (usually only for root)
+> 9. Kernel routines [Non standard]
+
+每个页面有着以下标题:
+
+| En | Zh |
+| :-: | :-: |
+| Name | 名字 |
+| Synopsis | 概述 |
+| Configuration | 配置 |
+| Description | 描述 |
+| Options | 选项 |
+| Exit status | 退出状态 |
+| Return value | 返回值 |
+| Errors | 错误 |
+| Environment | 环境 |
+| Files | 文件 |
+| Version | 版本 |
+| Conforming to | 符合标准 |
+| Notes | 备注 |
+| Bugs | 缺陷 |
+| Example | 实例 |
+| Authors | 作者 |
+| See also | 参考 |
+
+## 题八
+
+在 `utmp` 中还有四个字段没有使用
+
+```c
+struct exit_status ut_exit; /* 用作进程退出时的状态 DEAD_PROCESS */
+int32_t ut_addr_v6[4];      /* 远程主机的IP地址 */
+long int ut_session;        /* 会话使用, 不理解 */
+char __glibc_reserved[20];  /* 留作将来使用 */
+```
