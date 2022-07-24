@@ -2,6 +2,7 @@ SHELL = /bin/bash
 
 who: who.c utmplib.c
 	$(CC) who.c utmplib.c -o who
+	./who
 
 cp: cp.c
 	$(CC) cp.c -o cp
@@ -28,7 +29,11 @@ buffer_test: buffer_test.c
 	touch test_2_9
 	./2_9 test_2_9
 
+whoami: whoami.c utmplib.c
+	$(CC) whoami.c utmplib.c -o whoami
+	./whoami
+
 clean:
-	$(RM) who cp buffer_test test.file 2_6 test 2_9 test_2_9
+	$(RM) who cp buffer_test test.file 2_6 test 2_9 test_2_9 whoami
 
 PYTHON: clean
