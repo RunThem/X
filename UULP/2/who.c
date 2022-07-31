@@ -11,9 +11,9 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/time.h>
 #include <time.h>
-#include <unistd.h>
 #include <utmp.h>
 
 #define SHOWHOST /* include remote machine on output */
@@ -24,12 +24,19 @@ extern int          utmp_open(char* filename);
 extern struct utmp* utmp_next();
 extern void         utmp_close();
 
-int main() {
+int main(int argc, const char* argv[]) {
   struct utmp* utbufp;
 
-  if (-1 == utmp_open(UTMP_FILE)) {
-    perror(UTMP_FILE); /* UTMP_FILE is in utmp.h */
-    exit(1);
+  if (argc == 2 && !strncmp(argv[1], "-w", strlen("-w"))) {
+    if (-1 == utmp_open(WTMP_FILE)) {
+      perror(UTMP_FILE); /* UTMP_FILE is in utmp.h */
+      exit(1);
+    }
+  } else {
+    if (-1 == utmp_open(UTMP_FILE)) {
+      perror(UTMP_FILE); /* UTMP_FILE is in utmp.h */
+      exit(1);
+    }
   }
 
   while (NULL != (utbufp = utmp_next())) {
