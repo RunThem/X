@@ -12,6 +12,11 @@
 #include <unistd.h>
 #include <utmp.h>
 
+extern int          utmp_open(char* filename);
+extern struct utmp* utmp_next();
+int                 utmp_seek(__off_t off, int base);
+extern void         utmp_close();
+
 /*
  * logout_tty(char* line)
  * marks a utmp record as logged out
@@ -19,38 +24,38 @@
  * return -1 on error, 0 on success
  */
 int logout_tty(char* line) {
-  int         fd = 0;
-  struct utmp rec;
-  int         len = sizeof(struct utmp);
+  int          fd = 0;
+  struct utmp* utbufp;
 
   /* open file */
-  if (-1 == (fd = open(UTMP_FILE, O_RDWR))) {
+  if (-1 == (fd = utmp_open(UTMP_FILE))) {
+
     return -1;
   }
 
   /* search */
-  while (len == read(fd, &rec, len)) {
-    if (!strncmp(rec.ut_line, line, sizeof(rec.ut_line))) {
+  while (NULL != (utbufp = utmp_next())) {
+    if (!strncmp(utbufp->ut_line, line, sizeof(utbufp->ut_line))) {
       break;
     }
   }
 
-  rec.ut_type = DEAD_PROCESS; /* set type */
+  utbufp->ut_type = DEAD_PROCESS; /* set type */
 
-  if (-1 == gettimeofday(rec.ut_tv, NULL)) {
+  if (-1 == gettimeofday(utbufp->ut_tv, NULL)) {
     return -1;
   }
 
-  if (-1 == lseek(fd, -len, SEEK_CUR)) {
+  if (-1 == utmp_seek(-1, SEEK_CUR)) {
     return -1;
   }
 
-  if (-1 = write(fd, &rec, len)) {
+  if (-1 = write(fd, utbufp, sizeof(struct utmp))) {
     return -1;
   }
 
   /* close file */
-  close(fd);
+  utmp_close();
 
   return 0;
 }

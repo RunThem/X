@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <unistd.h>
 #include <utmp.h>
 
 #define NRECS 16
@@ -58,6 +59,10 @@ struct utmp* utmp_next() {
   }
 
   return recp;
+}
+
+int utmp_seek(__off_t off, int base) {
+  return lseek(fd_utmp, (num_recs - cur_rec + off) * UTSIZE, base);
 }
 
 /*
