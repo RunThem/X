@@ -29,8 +29,8 @@ buffer_test: buffer_test.c
 	touch test_2_9
 	./2_9 test_2_9
 
-whoami: whoami.c utmplib.c
-	$(CC) whoami.c utmplib.c -o whoami
+whoami: whoami.c
+	$(CC) whoami.c -o whoami
 	./whoami
 
 clean:
