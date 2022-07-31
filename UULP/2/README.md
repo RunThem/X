@@ -579,7 +579,7 @@ $ xxd test_2_9
 再一开始, 我的想法也是通过运行的程序得到用户id信息, 再从 `utmp` 中找到用户名,
 但发现这个似乎不行,
 然后看到了 [busybox](https://elixir.bootlin.com/busybox/0.52/source/whoami.c)
-中的做法, 有了一点头绪, 我们可以从 `pwd` 的信息中的到用户名
+中的做法, 有了一点头绪, 我们可以从 `pwd` 的信息中的到用户名.
 
 ```c
 /* geteuid() 返回调用进程的有效用户ID, 必然成功 */
@@ -593,3 +593,6 @@ struct passwd* user = getpwuid(geteuid())
 
 ### 题十二
 
+在 `utmp_next()` 中每次都返回一个 `ut_type != USER_PROCESS` 的 `struct utmp`,
+否则返回 `NULL`, 对 `who.c` 中有一点影响的, 在 `who.c`
+中重复判断了该 `struct utmp` 是否有效, 将该部分代码去掉即可.
