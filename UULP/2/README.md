@@ -604,3 +604,16 @@ struct passwd* user = getpwuid(geteuid())
 ### 题十四
 
 从命令行加入一个参数 `-w` 用于读取 `wtmp` 文件, 其他地方没有变化.
+
+### 题十五
+
+详情看代码, 其中一点就是我们如何判断目标文件是否存在, 可以使用到 `unistd.h`
+中的 `access({filename}, F_OK)` 来判断文件是否存在.
+
+```c
+if (access(fname, F_OK) == 0) {
+    // file exists
+} else {
+    // file doesn't exist
+}
+```
