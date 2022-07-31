@@ -585,3 +585,11 @@ $ xxd test_2_9
 /* geteuid() 返回调用进程的有效用户ID, 必然成功 */
 struct passwd* user = getpwuid(geteuid())
 ```
+
+### 题十一
+
+标准的 `cp` 命令是直接覆盖掉目标文件, 我们的 `cp` 命令也是一样的, 还有这个题是不是写错了,
+与 `who.c` 有关系吗?
+
+### 题十二
+
