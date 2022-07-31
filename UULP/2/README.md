@@ -596,3 +596,10 @@ struct passwd* user = getpwuid(geteuid())
 在 `utmp_next()` 中每次都返回一个 `ut_type != USER_PROCESS` 的 `struct utmp`,
 否则返回 `NULL`, 对 `who.c` 中有一点影响的, 在 `who.c`
 中重复判断了该 `struct utmp` 是否有效, 将该部分代码去掉即可.
+
+### 题十三
+
+详情看代码
+
+### 题十四
+
