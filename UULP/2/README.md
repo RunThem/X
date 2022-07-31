@@ -603,3 +603,4 @@ struct passwd* user = getpwuid(geteuid())
 
 ### 题十四
 
+从命令行加入一个参数 `-w` 用于读取 `wtmp` 文件, 其他地方没有变化.
