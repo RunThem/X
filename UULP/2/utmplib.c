@@ -42,14 +42,20 @@ struct utmp* utmp_next() {
     return NULLUT;
   }
 
-  if (cur_rec == num_recs && 0 == utmp_reload()) /* any more */
+  if (cur_rec == num_recs && 0 == utmp_reload()) /* anymore */
   {
     return NULLUT;
   }
 
   /* get address of next record */
-  recp = (struct utmp*)&utmpbuf[cur_rec * UTSIZE];
-  cur_rec++;
+  do {
+    recp = (struct utmp*)&utmpbuf[cur_rec * UTSIZE];
+    cur_rec++;
+  } while (cur_rec < num_recs && USER_PROCESS != recp->ut_type);
+
+  if (USER_PROCESS != recp->ut_type) {
+    return NULLUT;
+  }
 
   return recp;
 }

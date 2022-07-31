@@ -33,10 +33,6 @@ int main() {
   }
 
   while (NULL != (utbufp = utmp_next())) {
-    if (USER_PROCESS != utbufp->ut_type) {
-      continue;
-    }
-
     show_info(utbufp);
   }
 
