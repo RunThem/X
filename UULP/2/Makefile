@@ -1,4 +1,5 @@
 SHELL = /bin/bash
+CC = clang -m64
 
 who: who.c utmplib.c
 	$(CC) who.c utmplib.c -o who
@@ -33,7 +34,22 @@ whoami: whoami.c
 	$(CC) whoami.c -o whoami
 	./whoami
 
+ac: ac.c
+	$(CC) ac.c -o ac
+
+last: last.c
+	$(CC) last.c -o last
+
+cat: cat.c
+	$(CC) cat.c -o cat
+
+head: head.c
+	$(CC) head.c -o head
+
+tail: tail.c
+	$(CC) tail.c -o tail
+
 clean:
-	$(RM) who cp buffer_test test.file 2_6 test 2_9 test_2_9 whoami
+	$(RM) who cp buffer_test test.file 2_6 test 2_9 test_2_9 whoami ac last cat head tail
 
 PYTHON: clean
